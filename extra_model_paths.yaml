@@ -1,0 +1,36 @@
+#config for comfyui
+#your base path should be either an existing comfy install or a central folder where you store all of your models, loras, etc.
+
+comfyui:
+  base_path: /data/models/
+  # You can use is_default to mark that these folders should be listed first, and used as the default dirs for eg downloads
+  is_default: true
+  checkpoints: checkpoints/
+  clip: clip/
+  clip_vision: clip_vision/
+  configs: configs/
+  controlnet: controlnet/
+  diffusion_models: |
+    diffusion_models/
+    unet/
+  embeddings: embeddings/
+  loras: |
+    Lora/
+    loras/
+    LyCORIS/
+  text_encoders: text_encoders/
+  ultralytics: ultralytics/
+  ultralytics_bbox: ultralytics/bbox
+  ultralytics_segm: ultralytics/segm
+  upscale_models: |
+    upscale_models/
+    RealESRGAN/
+    ESRGAN/
+    SwinIR/
+    GFPGAN/
+  vae: VAE/
+  
+  #CUSTOM PATHS
+  LLM: LLM/
+  sams: sams/
+  tensorrt: tensorrt/

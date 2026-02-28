@@ -1,0 +1,31 @@
+services:
+  comfyui:
+    build: ./
+    container_name: comfyui
+    image: comfyui:0.15.1.a
+    environment:
+      - NODE_ENV=production
+      - FORCE_COLOR=1
+    ports:
+      - "7860:7860"
+    stop_signal: SIGKILL
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                device_ids: ['0']
+                capabilities: [compute, utility]
+    volumes:
+      - &v1 "comfyui_data:/data"
+      - &v2 "ai-models-diffusion:/data/models"
+      - &v3 "E:/Pictures/Stable-Diffusion/comfy:/stable-diffusion/output"
+
+name: comfyui-docker
+                
+volumes:
+    ai-models-diffusion:
+        external: true
+    comfyui_data:
+        external: true
