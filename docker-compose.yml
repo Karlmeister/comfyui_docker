@@ -2,7 +2,7 @@ services:
   comfyui:
     build: ./
     container_name: comfyui
-    image: comfyui:0.15.1.a
+    image: comfyui:0.19.3.a
     environment:
       - NODE_ENV=production
       - FORCE_COLOR=1
