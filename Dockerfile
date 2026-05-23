@@ -1,5 +1,5 @@
 # Use PYTORCH CUDA runtime with cuDNN support as the base image
-FROM pytorch/pytorch:2.11.0-cuda13.0-cudnn9-devel
+FROM pytorch/pytorch:2.12.0-cuda13.2-cudnn9-devel
     
 # Set ENV vars
 ENV DEBIAN_FRONTEND=noninteractive \
