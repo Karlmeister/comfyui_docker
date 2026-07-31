@@ -1,5 +1,5 @@
 # Use PYTORCH CUDA runtime with cuDNN support as the base image
-FROM pytorch/pytorch:2.12.0-cuda13.2-cudnn9-devel
+FROM pytorch/pytorch:2.13.0-cuda13.2-cudnn9-devel
     
 # Set ENV vars
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -12,35 +12,35 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
-        apt-utils \
         tzdata \
         ffmpeg \
         git \
-        software-properties-common \
         wget \
         curl \
-        python3.12-venv \
-    && apt-get clean
+		python3.12-venv \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR ${COMFYUI_PATH}
 
-# Clone ComfyUI and its dependencies
+# Clone ComfyUI (separate layer for better caching)
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_PATH}
+
+# Install Python dependencies (cached independently if requirements.txt hasn't changed)
 RUN --mount=type=cache,target=/root/.cache/pip \
-    git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_PATH} && \
-    cd ${COMFYUI_PATH} && \
     python -m venv venv && \
     . venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy necessary scripts for startup and comfyui custom nodes dependencies.
+# Copy necessary scripts for startup and comfyui custom nodes dependencies
 COPY extra_model_paths.yaml ${COMFYUI_PATH}
 COPY entrypoint.sh /docker/
 COPY dependencies_comfy_nodes.sh /docker/
-RUN chmod u+x /docker/entrypoint.sh && chmod u+x /docker/dependencies_comfy_nodes.sh
+RUN chmod u+x /docker/entrypoint.sh /docker/dependencies_comfy_nodes.sh
 
 # Make port 7860 available to the world outside this container
 EXPOSE 7860
+
 ENTRYPOINT ["/docker/entrypoint.sh"]
-CMD python3 -u main.py --listen --port 7860
+CMD ["python3", "-u", "main.py", "--listen", "--port", "7860"]
